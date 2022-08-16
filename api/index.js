@@ -1,9 +1,13 @@
-const router = require("express").Router();
+const router = require('express').Router();
 
-// Middlewares
-const user = require("./user/user.routes");
+// Routes
+const internal = require('./internal');
+const WRLD = require('./WRLD/WRLD.routes');
 
-// API routes
-router.use("/users", user);
+// Internal API routes
+router.use('/internal', internal);
+router.use('/WRLD', WRLD);
+
+// Public API routes
 
 module.exports = router;

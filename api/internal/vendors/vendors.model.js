@@ -1,7 +1,7 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const userSchema = new Schema(
+const vendorSchema = new Schema(
   {
     username: {
       type: String,
@@ -12,15 +12,15 @@ const userSchema = new Schema(
       type: String,
       required: false,
     },
-    isDeleted: {
+    is_deleted: {
       type: Boolean,
       required: true,
       default: false,
     },
   },
   {
-    timestamps: true,
-  }
+    timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },
+  },
 );
 
-module.exports = mongoose.model("User", userSchema);
+module.exports = mongoose.model('Vendor', vendorSchema);

@@ -1,10 +1,10 @@
 /**
  * @type {import('mongoose').Model}
  */
-const User = require("./user.model");
-const ERRORS = require("../../lib/errors");
-const { hashPassword, checkPassword } = require("../../lib/utils");
-const { jwtSign } = require("../../lib/jwt");
+const User = require('./vendors.model');
+const ERRORS = require('../../../lib/errors');
+const { hashPassword, checkPassword } = require('../../../lib/utils');
+const { jwtSign } = require('../../../lib/jwt');
 
 function signUp(data) {
   return new Promise(async (resolve, reject) => {
@@ -58,7 +58,7 @@ function signIn(data) {
 function getUsers() {
   return new Promise(async (resolve, reject) => {
     try {
-      const results = User.find({ isDeleted: false }, { __v: 0, password: 0 });
+      const results = User.find({ is_deleted: false }, { __v: 0, password: 0 });
 
       resolve(results);
     } catch (error) {
