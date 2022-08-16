@@ -1,40 +1,40 @@
-require('dotenv').config();
+require("dotenv").config();
 console.clear();
-const express = require('express');
-const morgan = require('morgan');
-const cors = require('cors');
-const helmet = require('helmet');
-const api = require('./api');
-const { errorHandler, notFound, databaseStatus } = require('./middlewares');
-const connect = require('./lib/database');
-const cookieParser = require('cookie-parser');
+const express = require("express");
+const morgan = require("morgan");
+const cors = require("cors");
+const helmet = require("helmet");
+const api = require("./api");
+const { errorHandler, notFound, databaseStatus } = require("./middlewares");
+const connect = require("./lib/database");
+const cookieParser = require("cookie-parser");
 
 // Configs
-const { CLIENT, WEB_SERVER, META } = require('./lib/configs');
+const { CLIENT, WEB_SERVER, META, CORS } = require("./lib/configs");
 
 const app = express();
 
 //Database
 connect()
   .then((client) => {
-    app.set('database', true);
-    app.set('database-client', client);
+    app.set("database", true);
+    app.set("database-client", client);
   })
   .catch((err) => {
     console.log(err);
-    app.set('database', false);
+    app.set("database", false);
   });
 
 // Middlewares
-app.set('trust proxy', 1);
-app.use(morgan('dev'));
+app.set("trust proxy", 1);
+app.use(morgan("dev"));
 app.use(
   cors({
-    origin: [`${WEB_SERVER.ENV === 'production' ? CLIENT.URL_ORIGIN : 'http://localhost:3000'}`],
+    origin: [CORS.ALLOWED],
     credentials: true,
-    allowedHeaders: 'Content-Type,Authorization',
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-  }),
+    allowedHeaders: "Content-Type,Authorization",
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
+  })
 );
 app.use(cookieParser());
 app.use(helmet());
