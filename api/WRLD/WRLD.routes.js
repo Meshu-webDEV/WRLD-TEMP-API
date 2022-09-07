@@ -7,6 +7,7 @@ const { getWrldData, newWrldData, newWrldAdmin, getAdmin, signIn } = require('./
 const { jwtTokenPayload } = require('../../lib/jwt');
 const { isAuthorized, isWrldAdmin } = require('../../middlewares');
 const { WEB_SERVER } = require('../../lib/configs');
+const errors = require('../../lib/errors');
 
 // Validation
 // const validate = require('../../lib/validation');
@@ -14,7 +15,9 @@ const { WEB_SERVER } = require('../../lib/configs');
 // POST ../v1/WRLD/
 router.post('/', async (req, res, next) => {
   try {
-    const result = await newWrldData(req.body);
+    if (!Object.keys(req.query).length) throw errors.MISSING_BODY;
+
+    const result = await newWrldData(req.query);
 
     return res.status(200).json({ data: result });
   } catch (error) {
