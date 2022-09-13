@@ -7,23 +7,21 @@
     <title>Processing form</title>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script defer>
-      const IS_SUCCESS_URL = '<%= SUCCESS_CHECK_URL %>';
-      const SUCCESS_REDIRECT = '<%= SUCCESS_REDIRECT %>';
-      const FAILURE_REDIRECT = '<%= FAILURE_REDIRECT %>';
+      const IS_SUCCESS_URL = "<%= SUCCESS_CHECK_URL %>";
+      const SUCCESS_REDIRECT = "<%= SUCCESS_REDIRECT %>";
+      const FAILURE_REDIRECT = "<%= FAILURE_REDIRECT %>";
 
       const timeoutId = setTimeout(async () => {
         try {
           await checkSuccess();
-          // redirect
-          console.log('success!');
+          // redirect success
           window.location.replace(SUCCESS_REDIRECT);
         } catch (error) {
           // redirect fail
-          console.log('failed!');
           console.log(error);
           window.location.replace(FAILURE_REDIRECT);
         }
-      }, 500);
+      }, 1000);
 
       function checkSuccess() {
         let keep_checking = true;
@@ -34,20 +32,17 @@
           try {
             setTimeout(async () => {
               while (keep_checking) {
-                console.log('stating while loop..');
-                retries--;
-
-                console.log('throttling: ', retries * 100);
-                response = await axios.get(`${IS_SUCCESS_URL}&retries=${retries}`);
-
-                console.log('response:');
-                console.log(response?.data?.success);
+                console.log("throttling: ", retries * 100, "ms");
+                response = await axios.get(IS_SUCCESS_URL);
 
                 if (response?.data?.success) keep_checking = false;
                 if (retries === 0) keep_checking = false;
+
+                retries--;
               }
-              if (response?.data?.success) return resolve(response?.data?.result);
-              reject('NOT FOUND');
+              if (response?.data?.success)
+                return resolve(response?.data?.result);
+              reject("NOT FOUND");
             }, retries * 100);
           } catch (error) {
             console.log(error);
@@ -58,6 +53,7 @@
     </script>
   </head>
   <body>
-    <p>Processing..</p>
+    <h6>Processing..</h6>
+    <p>Do not close the tab.</p>
   </body>
 </html>
