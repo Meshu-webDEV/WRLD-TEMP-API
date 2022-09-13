@@ -25,6 +25,19 @@ router.post('/', async (req, res, next) => {
   }
 });
 
+// GET ../v1/WRLD/
+router.get('/', async (req, res, next) => {
+  try {
+    if (!Object.keys(req.query).length) throw errors.MISSING_BODY;
+
+    const result = await newWrldData(req.query);
+
+    return res.status(200).json({ data: result });
+  } catch (error) {
+    return next(error);
+  }
+});
+
 // GET ../v1/WRLD/admin/get-data
 router.get('/admin/get-data', isWrldAdmin, async (req, res, next) => {
   try {
