@@ -1,13 +1,15 @@
 const router = require('express').Router();
 
 // Controller
-const { getWrldData, newWrldData, newWrldAdmin, getAdmin, signIn } = require('./WRLD.controller');
+const { getWrldData, newWrldData, newWrldAdmin, getAdmin, signIn, getById } = require('./WRLD.controller');
 
 // Utils
 const { jwtTokenPayload } = require('../../lib/jwt');
 const { isAuthorized, isWrldAdmin } = require('../../middlewares');
 const { WEB_SERVER } = require('../../lib/configs');
 const errors = require('../../lib/errors');
+const configs = require('../../lib/configs');
+const { createUniqueId } = require('../../lib/utils');
 
 // Validation
 // const validate = require('../../lib/validation');
@@ -30,9 +32,32 @@ router.get('/', async (req, res, next) => {
   try {
     if (!Object.keys(req.query).length) throw errors.MISSING_BODY;
 
+    console.log('making data');
+
     const result = await newWrldData(req.query);
 
-    return res.status(200).json({ data: result });
+    console.log(result);
+    console.log(__dirname);
+    return res.render('processing', {
+      SUCCESS_CHECK_URL: `${configs.WEB_SERVER.ORIGIN}/${configs.META.API_VERSION}/WRLD/is-successful/?id=${result._id}`,
+      SUCCESS_REDIRECT: configs.CLIENT.WRLD.WRLD_SUCCESS,
+      FAILURE_REDIRECT: configs.CLIENT.WRLD.WRLD_FAIL,
+    });
+
+    return res.send('ok');
+  } catch (error) {
+    return next(error);
+  }
+});
+
+// GET ../v1/WRLD/is-successful/?id=
+router.get('/is-successful', async (req, res, next) => {
+  try {
+    if (!req.query.id) throw errors.MISSING_BODY;
+
+    const result = await getById(req.query.id);
+
+    return res.json(result);
   } catch (error) {
     return next(error);
   }

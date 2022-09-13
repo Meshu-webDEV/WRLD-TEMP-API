@@ -44,6 +44,7 @@ app.use(
   }),
 );
 app.use(express.json());
+app.set('view engine', 'ejs');
 
 const functions = {
   string: () => {
@@ -58,13 +59,6 @@ const functions = {
 };
 
 // API route
-app.get('/:key', (req, res, next) => {
-  const schema = joi[req.params.key]();
-  const schema2 = joi.number();
-  console.log(schema);
-
-  res.send('ok');
-});
 app.use(`/${META.API_VERSION}`, databaseStatus, api);
 
 app.listen(WEB_SERVER.PORT, () => {

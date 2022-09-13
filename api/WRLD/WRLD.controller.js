@@ -22,6 +22,23 @@ function getWrldData() {
   });
 }
 
+function getById(id) {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const results = await WRLD.findOne({ is_deleted: false, _id: id }, { __v: 0, password: 0 });
+
+      if (!results) return resolve({ success: false, result: null });
+
+      console.log('found:');
+      console.log(results);
+      resolve({ success: true, result: results });
+    } catch (error) {
+      console.log('not found?');
+      reject(ERRORS.INTERNAL);
+    }
+  });
+}
+
 function newWrldData(data) {
   return new Promise(async (resolve, reject) => {
     try {
@@ -29,6 +46,7 @@ function newWrldData(data) {
 
       resolve(result);
     } catch (error) {
+      console.log('---- ERROR');
       reject(ERRORS.INTERNAL);
     }
   });
@@ -92,4 +110,5 @@ module.exports = {
   newWrldData,
   getAdmin,
   signIn,
+  getById,
 };
