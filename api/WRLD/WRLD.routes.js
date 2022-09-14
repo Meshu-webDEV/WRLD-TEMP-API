@@ -1,28 +1,21 @@
-const router = require("express").Router();
+const router = require('express').Router();
 
 // Controller
-const {
-  getWrldData,
-  newWrldData,
-  newWrldAdmin,
-  getAdmin,
-  signIn,
-  getById,
-} = require("./WRLD.controller");
+const { getWrldData, newWrldData, newWrldAdmin, getAdmin, signIn, getById } = require('./WRLD.controller');
 
 // Utils
-const { jwtTokenPayload } = require("../../lib/jwt");
-const { isAuthorized, isWrldAdmin } = require("../../middlewares");
-const { WEB_SERVER } = require("../../lib/configs");
-const errors = require("../../lib/errors");
-const configs = require("../../lib/configs");
-const { createUniqueId } = require("../../lib/utils");
+const { jwtTokenPayload } = require('../../lib/jwt');
+const { isAuthorized, isWrldAdmin } = require('../../middlewares');
+const { WEB_SERVER } = require('../../lib/configs');
+const errors = require('../../lib/errors');
+const configs = require('../../lib/configs');
+const { createUniqueId } = require('../../lib/utils');
 
 // Validation
 // const validate = require('../../lib/validation');
 
 // POST ../v1/WRLD/
-router.post("/", async (req, res, next) => {
+router.post('/', async (req, res, next) => {
   try {
     if (!Object.keys(req.query).length) throw errors.MISSING_BODY;
 
@@ -35,30 +28,30 @@ router.post("/", async (req, res, next) => {
 });
 
 // GET ../v1/WRLD/
-router.get("/", async (req, res, next) => {
+router.get('/', async (req, res, next) => {
   try {
     if (!Object.keys(req.query).length) throw errors.MISSING_BODY;
 
-    console.log("making data");
+    console.log('making data');
 
     const result = await newWrldData(req.query);
 
     console.log(result);
     console.log(__dirname);
-    return res.render("processing", {
-      SUCCESS_CHECK_URL: `is-successful/?id=${result._id}`,
+    return res.render('processing', {
+      SUCCESS_CHECK_URL: `WRLD/is-successful/?id=${result._id}`,
       SUCCESS_REDIRECT: configs.CLIENT.WRLD.WRLD_SUCCESS,
       FAILURE_REDIRECT: configs.CLIENT.WRLD.WRLD_FAIL,
     });
 
-    return res.send("ok");
+    return res.send('ok');
   } catch (error) {
     return next(error);
   }
 });
 
 // GET ../v1/WRLD/is-successful/?id=
-router.get("/is-successful", async (req, res, next) => {
+router.get('/is-successful', async (req, res, next) => {
   try {
     if (!req.query.id) throw errors.MISSING_BODY;
 
@@ -71,7 +64,7 @@ router.get("/is-successful", async (req, res, next) => {
 });
 
 // GET ../v1/WRLD/admin/get-data
-router.get("/admin/get-data", isWrldAdmin, async (req, res, next) => {
+router.get('/admin/get-data', isWrldAdmin, async (req, res, next) => {
   try {
     const result = await getWrldData();
 
@@ -82,7 +75,7 @@ router.get("/admin/get-data", isWrldAdmin, async (req, res, next) => {
 });
 
 // POST ../v1/WRLD/admin
-router.post("/admin/", async (req, res, next) => {
+router.post('/admin/', async (req, res, next) => {
   try {
     const result = await newWrldAdmin(req.body);
 
@@ -94,7 +87,7 @@ router.post("/admin/", async (req, res, next) => {
 });
 
 // POST ../v1/WRLD/admin/me
-router.post("/admin/me", isWrldAdmin, async (req, res, next) => {
+router.post('/admin/me', isWrldAdmin, async (req, res, next) => {
   try {
     const { _id } = await jwtTokenPayload(req.cookies.token);
     const me = await getAdmin(_id);
@@ -107,15 +100,15 @@ router.post("/admin/me", isWrldAdmin, async (req, res, next) => {
 });
 
 // POST ../v1/WRLD/admin/signin
-router.post("/admin/signin", async (req, res, next) => {
+router.post('/admin/signin', async (req, res, next) => {
   try {
     const { username, token } = await signIn(req.body);
     return res
       .status(200)
-      .cookie("token", token, {
-        secure: WEB_SERVER.ENV === "production" ? true : false,
-        httpOnly: WEB_SERVER.ENV === "production" ? true : false,
-        sameSite: "none", //on production
+      .cookie('token', token, {
+        secure: WEB_SERVER.ENV === 'production' ? true : false,
+        httpOnly: WEB_SERVER.ENV === 'production' ? true : false,
+        sameSite: 'none', //on production
         maxAge: 1000 * 60 * 60 * 24 * 14, // Two Weeks
       })
       .json({ username });
@@ -125,12 +118,9 @@ router.post("/admin/signin", async (req, res, next) => {
 });
 
 // POST ../v1/WRLD/admin/signup
-router.get("/admin/signout", async (req, res, next) => {
+router.get('/admin/signout', async (req, res, next) => {
   try {
-    return res
-      .status(200)
-      .clearCookie("token")
-      .json({ status: 1, message: "Successfully signed out." });
+    return res.status(200).clearCookie('token').json({ status: 1, message: 'Successfully signed out.' });
   } catch (error) {
     return next(error);
   }
